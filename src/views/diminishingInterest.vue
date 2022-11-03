@@ -69,6 +69,15 @@
           <button type="button" class="btn btn-primary" @click="clearForm()">
             Clear
           </button>
+          <!-- button for download pdf -->
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="downloadPDF()"
+            v-if="show"
+          >
+            Download PDF
+          </button>
         </form>
       </div>
     </div>
@@ -90,7 +99,7 @@
     <div class="row scroll" v-if="show">
       <!-- display the table form of calculated loan which number of rows depends to the number of payments -->
       <table class="table table-striped">
-        <thead>
+        <thead class="thead">
           <tr>
             <th scope="col">Payment Number</th>
             <th scope="col">Payment Date</th>
@@ -102,7 +111,7 @@
           </tr>
         </thead>
         <!-- table for  -->
-        <tbody>
+        <tbody class="tbody">
           <tr v-for="payment in payments" :key="payment.paymentNumber">
             <td>{{ payment.paymentNumber }}</td>
             <td>{{ payment.paymentDate }}</td>
@@ -119,6 +128,8 @@
 </template>
 
 <script>
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 export default {
   name: "diminishingInterest",
   data() {
@@ -300,6 +311,57 @@ export default {
       this.interestRate = 0;
       this.paymentFrequency = 0;
       this.show = false;
+    },
+    downloadPDF() {
+      // get the table data
+      let payments = this.payments;
+      // get the table header
+      let header = Object.keys(payments[0]);
+      // create a new jsPDF instance
+      let doc = new jsPDF("p", "pt");
+      console.log(payments);
+      // import jsPDF autoTable plugin and call autoTable function
+      autoTable(doc, {
+        head: [header],
+        // display the body with the value of [payments] and convert it to string
+        body: payments.map((payment) => {
+          return header.map((key) => {
+            return String(payment[key]);
+          });
+        }),
+        theme: "grid",
+        styles: {
+          overflow: "linebreak",
+          fontSize: 8,
+        },
+        columnStyles: {
+          paymentNumber: { align: "center" },
+          paymentDate: { align: "center" },
+          beginning_balance: { align: "center" },
+          paymentAmount: { align: "center" },
+          principal: { align: "center" },
+          interest: { align: "center" },
+          ending_balance: { align: "center" },
+        },
+        margin: { top: 80 },
+        // use didDrawPage
+        didDrawPage: function (data) {
+          // set font size
+          doc.setFontSize(30);
+          // set font type
+          doc.setFont("helvetica");
+          // set text color to red
+          doc.setTextColor(255, 0, 0);
+          // add text
+          doc.text(
+            "Amortization Schedule",
+            data.settings.margin.left + 100,
+            50
+          );
+        },
+      });
+      // save the pdf
+      doc.save("table.pdf");
     },
   },
   // watch values in form

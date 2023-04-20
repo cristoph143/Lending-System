@@ -2,37 +2,14 @@
   <div class="home">
     <h1>Loan Calculator</h1>
     <!-- create 4 boxes for each category -->
-    <div class="box scrollables">
-      <h1>Diminishing Interest</h1>
+    <div
+      v-for="destination in destinations"
+      :key="destination.slug"
+      class="box scrollables"
+    >
+      <h1>{{ destination.name }}</h1>
       <!-- go to button with icon and router -->
-      <router-link to="/diminishing">
-        <button class="goToButton btn">
-          <i class="fas fa-arrow-right">Calculate Now</i>
-        </button>
-      </router-link>
-    </div>
-    <div class="box">
-      <h1>Fixed Interest</h1>
-      <!-- go to button with icon and router -->
-      <router-link to="/fixed">
-        <button class="goToButton btn">
-          <i class="fas fa-arrow-right">Calculate Now</i>
-        </button>
-      </router-link>
-    </div>
-    <div class="box">
-      <h1>Lump Sum Payment</h1>
-      <!-- go to button with icon and router -->
-      <router-link to="/lumpsum">
-        <button class="goToButton btn">
-          <i class="fas fa-arrow-right">Calculate Now</i>
-        </button>
-      </router-link>
-    </div>
-    <div class="box">
-      <h1>Penalty Calculator</h1>
-      <!-- go to button with icon and router -->
-      <router-link to="/penalty">
+      <router-link :to="`/${destination.slug}`">
         <button class="goToButton btn">
           <i class="fas fa-arrow-right">Calculate Now</i>
         </button>
@@ -41,9 +18,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Vue } from "vue-class-component";
-export default class HomeView extends Vue {}
+<script>
+import { mapState } from "vuex";
+
+export default {
+  computed: {
+    ...mapState({
+      destinations: (state) => state.destinations.destinations,
+    }),
+  },
+};
 </script>
 
 <style>

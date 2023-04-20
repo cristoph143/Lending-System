@@ -7,11 +7,16 @@
 
 <script>
 import TheNavigation from "@/components/TheNavigation";
+import store from "@/store"; // import the store
 
 export default {
   name: "App",
   components: {
     TheNavigation,
+  },
+  // register the store with the Vue instance
+  created() {
+    this.$store = store;
   },
 };
 </script>

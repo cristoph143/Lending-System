@@ -1,5 +1,4 @@
 export default {
-  user: null,
   destinations: [
     {
       name: "Diminishing Interest",
